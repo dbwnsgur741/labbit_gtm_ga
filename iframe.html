@@ -1,0 +1,7 @@
+function() {
+    try {
+      return window.top !== window.self;
+    } catch(e) {
+      return false;
+    }
+}

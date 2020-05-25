@@ -1,0 +1,29 @@
+
+<!-- LABBIT 향상된 전자상거래 상세페이지 뷰 -->
+
+<script>
+
+    var labbit_category = "{$cate_no}";
+    var labbit_pdName = "{$name}".replace(/(<([^>]+)>)/gi, "");
+    var labbit_pdId = "{$product_no}";
+    var labbit_pdPrice = "{$product_price}";
+    
+        dataLayer.push({
+          'ecommerce': {
+            'detail': {
+              'actionField': {}, // 'detail' actions have an optional list property. ( 옵션 사항 )
+              'products': [{
+                'name': "{$name}".replace(/(<([^>]+)>)/gi, "") ,// 제품명또는 전환메뉴명입력 ( 필수 )
+                'id': "{$product_no}" , // 제품 ID 값 혹은 SKU 입력 ( 필수 )
+                'price': "{$product_price}", // 가격 정보 , ( 필수  X )
+                'category': "{$cate_no}", // 카테고리 넘버 ( 필수 X )
+                // 'variant' : 'Gray' 제품 옵션 관련 설정 ( 필수 X )
+               }]
+             }
+           }
+        });
+    
+    </script>
+    
+    <!-- LABBIT 향상된 전자상거래 상세페이지 뷰 끝 -->
+    

@@ -1,0 +1,57 @@
+
+<!-- LABBIT Google Tag Manager 상단 actionField 부분 -->
+
+<script>
+    var labbit_actionField = new Object();
+
+    labbit_actionField.id = "{$order_id}"; //  상단 주문 정보 모듈 
+    labbit_actionField.affiliation = '브랜드명'; // 미리 세팅 
+    labbit_actionField.revenue = '{$result_order_price}'; // 가격 출력하는 모듈
+    labbit_actionField.shipping = '{$total_ship_fee}'; // 가격 출혁하는 모듈 
+
+</script>
+
+<!-- LABBIT Google Tag Manager 상단 actionField 부분  끝 -->
+
+
+<!-- LABBIT Google Tag Manager 상품 반복 부분 -->
+
+<script>
+    // 배열 선언 ( global )
+    if(!window.labbit_pdList){
+        window.labbit_pdList = []; 
+    }
+
+    // 모듈별로 서버변수 값이 다를 수 있음
+
+    if ('{$product_name}' != "") {
+        labbit_pdList.push({
+            'name': '{$product_name}',
+            'id': '{$product_no}',
+            'price': '{$product_price}'.replace(/[^0-9]/g, ""),
+            'quantity': parseInt('{$product_quantity}'),
+            'category': '{$param}'.split('cate_no=')[1],
+            'variant': ('{$product_opt_str}' ? '{product_opt_str}' : '{$product_name}'),
+        });
+    }
+</script>
+
+<!-- LABBIT Google Tag Manager 상품 반복 부분 끝 -->
+
+
+
+<!-- LABBIT Google Tag Manager 최하단 GA로 데이터 전송 -->
+<script>
+    if (labbit_pdList.length > 0 && labbit_actionField ) {
+        dataLayer.push({
+            'event': 'NomalPurchase',
+            'ecommerce': {
+                'purchase': {
+                    'actionField': labbit_actionField,
+                    'products': labbit_pdList
+                }
+            }
+        });
+    }
+</script>
+<!-- LABBIT Google Tag Manager 최하단 GA로 데이터 전송 끝 -->

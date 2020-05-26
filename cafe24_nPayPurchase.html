@@ -86,7 +86,7 @@
 
     function sendNpayPurchaseData(nPayProducts) {
 
-        var revenue = document.querySelector('.total').innerText.split('원')[0].replace(/[^0-9]/g, '');
+        var revenue = document.querySelector('.total').innerText.split('원')[0].replace(/[^0-9]/g, ''); // 총 상품 금액 
 
         dataLayer.push({
             'event': 'NpayPurchase',
@@ -96,7 +96,7 @@
                         'id': getNpayId(),
                         'affiliation': '브랜드 명',
                         'revenue': revenue,
-                        'shipping': '',
+                        'shipping': '', 
                         'coupon': ''
                     },
                     'products': nPayProducts

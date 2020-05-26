@@ -6,8 +6,8 @@
 
     labbit_actionField.id = "{$order_id}"; //  상단 주문 정보 모듈 
     labbit_actionField.affiliation = '브랜드명'; // 미리 세팅 
-    labbit_actionField.revenue = '{$result_order_price}'; // 가격 출력하는 모듈
-    labbit_actionField.shipping = '{$total_ship_fee}'; // 가격 출혁하는 모듈 
+    labbit_actionField.revenue = '{$result_order_price}'.replace(/[^0-9]/g, ""); // 가격 출력하는 모듈
+    labbit_actionField.shipping = '{$total_ship_fee}'.replace(/[^0-9]/g, ""); // 가격 출혁하는 모듈 
 
 </script>
 

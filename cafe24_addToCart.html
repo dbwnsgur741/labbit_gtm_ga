@@ -9,11 +9,12 @@
 -->
 
 <script>
-    
     // 장바구니 버튼에 이벤트 바인딩 ( ※ 모듈에 따라 달라질 수 있음 )
-    document.querySelector('.actionCart').addEventListener('click', function () {
-        setCartdata();
-    });
+    window.onload = function () {
+        document.querySelector('.actionCart').addEventListener('click', function () {
+            setCartdata();
+        });
+    }
 
     function setCartdata() {
 
@@ -30,7 +31,7 @@
                 var productVariant = pdList[num].querySelector('span').innerText;
                 var productPrice = pdList[num].querySelector('.ec-front-product-item-price').innerText.split('원')[0]
                     .replace(/[^0-9]/g, '');
-                var productCartCount = pdList[num].querySelector('.quantity_opt').value; 
+                var productCartCount = pdList[num].querySelector('.quantity_opt').value;
 
                 products.push({
                     'name': labbit_pdName,
@@ -44,7 +45,7 @@
             }
         }
 
-        if(!isOption){
+        if (!isOption) {
             // 비옵션일 경우 ..
             var productCartCount = document.querySelector('#quantity').value;
 
@@ -59,7 +60,6 @@
             });
 
         }
-
 
         if (!products.length == 0) {
             sendAddToCartData(products);

@@ -1,0 +1,82 @@
+<!-- LABBIT 향상된 전자상거래 Add To Cart -->
+
+<!-- 
+    ** detailPageView.html 에서 미리 세팅해 놓은 변수들 사용 
+    ** var labbit_category = "{$cate_no}";
+    ** var labbit_pdName = "{$name}".replace(/(<([^>]+)>)/gi, "");
+    ** var labbit_pdId = "{$product_no}";
+    ** var labbit_pdPrice = "{$product_price}";
+-->
+
+<script>
+    
+    // 장바구니 버튼에 이벤트 바인딩 ( ※ 모듈에 따라 달라질 수 있음 )
+    document.querySelector('.actionCart').addEventListener('click', function () {
+        setCartdata();
+    });
+
+    function setCartdata() {
+
+        var products = []; // 장바구니 이벤트에 담길 상품 목록 
+        var pdList = document.querySelectorAll('.option_product'); // 옵션 있는 경우에 장바구니에 담길 상품 목록 ( ※ 모듈에 따라 달라질 수 있음 )
+        var isOption = document.querySelector('.xans-product-option > li'); // 옵션 유무 판별 ( ※ 모듈에 따라 달라질 수 있음 )
+
+        // 옵션 있고 , 장바구니에 담길 상품이 있는 경우 
+        if (pdList.length > 0 && isOption) {
+            var num = 0;
+
+            for (num = 0; num < pdList.length; num++) {
+
+                var productVariant = pdList[num].querySelector('span').innerText;
+                var productPrice = pdList[num].querySelector('.ec-front-product-item-price').innerText.split('원')[0]
+                    .replace(/[^0-9]/g, '');
+                var productCartCount = pdList[num].querySelector('.quantity_opt').value; 
+
+                products.push({
+                    'name': labbit_pdName,
+                    'id': labbit_pdId,
+                    'price': '' + parseInt(productPrice) / parseInt(productCartCount),
+                    'brand': '브랜드 명',
+                    'category': labbit_category,
+                    'variant': productVariant,
+                    'quantity': parseInt(productCartCount),
+                });
+            }
+        }
+
+        if(!isOption){
+            // 비옵션일 경우 ..
+            var productCartCount = document.querySelector('#quantity').value;
+
+            products.push({
+                'name': labbit_pdName,
+                'id': labbit_pdId,
+                'price': labbit_pdPrice,
+                'brand': '브랜드 명',
+                'category': labbit_category,
+                'variant': labbit_pdName,
+                'quantity': parseInt(productCartCount),
+            });
+
+        }
+
+
+        if (!products.length == 0) {
+            sendAddToCartData(products);
+        }
+    }
+
+    function sendAddToCartData(products) {
+        dataLayer.push({
+            'event': 'addToCart',
+            'ecommerce': {
+                'currencyCode': 'KRW',
+                'add': {
+                    'products': products
+                }
+            }
+        });
+    }
+</script>
+
+<!-- LABBIT 향상된 전자상거래 Add To Cart 끝 -->

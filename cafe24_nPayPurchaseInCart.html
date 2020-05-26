@@ -1,0 +1,83 @@
+<!-- LABBIT 향상된 전자상거래 네이버페이 구매 ( IN CART PAGE ) -->
+<script>
+
+    var nPayPurchaseFlag = true; // 네이버 구매 버튼 클릭 중복 방지 ( 1분 )
+
+    // 네이버페이 구매 버튼 이벤트 바인딩 
+    window.addEventListener("load", function (event) {
+        $('.npay_btn_pay').bind('click', function () {
+            setNpayPurchase();
+        });
+
+    }, false);
+
+    function setNpayPurchase() {
+        var nPayProducts = [];
+        var pdList = aBasketProductData; // 장바구니에 담긴 상품 목록 ( cafe 24 제공 ) / 없을 경우 주문완료 코드 참고..
+
+        for (var i = 0; i < pdList.length; i++) {
+            nPayProducts.push({
+                'name': pdList[i].product_name,
+                'id': '' + pdList[i].product_no,
+                'price': '' + pdList[i].product_sum_price,
+                'quantity': parseInt(pdList[i].product_qty),
+                'brand': '브랜드 명',
+                'category': '' + pdList[i].main_cate_no,
+                'variant': (pdList[i].option_str !="" ? pdList[i].option_str : pdList[i].product_name),
+            });
+        }
+
+        if (nPayProducts.length == 0) {
+            return;
+        }
+
+        if (!nPayPurchaseFlag) {
+            return;
+        }
+
+        nPayPurchaseFlag = false;
+        setTimeout(function () {
+            nPayPurchaseFlag = true;
+        }, 60000);
+
+        fetchNpayPurchaseData(nPayProducts);
+    }
+
+    function fetchNpayPurchaseData(nPayProducts) {
+
+        /* 총 상품금액 / 배송비 서버 변수 세팅
+        <input type="hidden" id="labbit_total_revenue" value="{$total_product_price}">
+        <input type="hidden" id="labbit_total_shipping" value="{$total_delv_price}">
+        */
+
+        var revenue = document.querySelector('#labbit_total_revenue').value.split('원')[0].replace(/[^0-9]/g, '');
+        var shipping = document.querySelector('#labbit_total_shipping').value.split('원')[0].replace(/[^0-9]/g, '');
+
+        dataLayer.push({
+            'event': 'NpayPurchase',
+            'ecommerce': {
+                'purchase': {
+                    'actionField': {
+                        'id': getNpayId(),
+                        'affiliation': '브랜드 명',
+                        'revenue': revenue,
+                        'shipping': shipping,
+                        'coupon': ''
+                    },
+                    'products': nPayProducts
+                }
+            }
+        });
+    }
+
+    function getNpayId() {
+        var setTime = new Date();
+        var setYear = setTime.getFullYear();
+        var setMonth = setTime.getMonth() + 1;
+        var setDate = setTime.getDate();
+
+        return ("NPAY - " + setYear + setMonth + setDate + " - " + setTime.getTime());
+    }
+</script>
+
+<!-- LABBIT 향상된 전자상거래 네이버페이 구매 ( IN CART PAGE ) 끝-->

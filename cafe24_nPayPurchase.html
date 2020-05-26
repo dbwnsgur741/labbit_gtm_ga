@@ -1,0 +1,118 @@
+<!-- LABBIT 향상된 네이버 페이 구매  In DetailPageView  -->
+
+<!-- 
+    ** detailPageView.html 에서 미리 세팅해 놓은 변수들 사용 
+    ** var labbit_category = "{$cate_no}";
+    ** var labbit_pdName = "{$name}".replace(/(<([^>]+)>)/gi, "");
+    ** var labbit_pdId = "{$product_no}";
+    ** var labbit_pdPrice = "{$product_price}";
+-->
+
+<script>
+
+    var nPayPurchaseFlag = true; // 네이버 구매 버튼 클릭 중복 방지 ( 1분 )
+
+    // 네이버페이 구매 버튼 이벤트 바인딩 
+    window.addEventListener("load", function (event) {
+        $('.npay_btn_pay').bind('click', function () {
+            setNpayPurchase();
+        });
+
+    }, false);
+
+    function setNpayPurchase() {
+
+        var nPayProducts = []; // 네이버페이 구매 이벤트에 담길 상품 목록 
+
+        var pdList = document.querySelectorAll('.option_product'); // 옵션 있는 경우에 장바구니에 담길 상품 목록 ( ※ 모듈에 따라 달라질 수 있음 )
+        var isOption = document.querySelector('.xans-product-option > li'); // 옵션 유무 판별 ( ※ 모듈에 따라 달라질 수 있음 )
+
+        // 옵션 있고 , 장바구니에 담길 상품이 있는 경우 
+        if (pdList.length > 0 && isOption) {
+            var num = 0;
+
+            for (num = 0; num < pdList.length; num++) {
+
+                var productVariant = pdList[num].querySelector('span').innerText;
+                var productPrice = pdList[num].querySelector('.ec-front-product-item-price').innerText.split('원')[0]
+                    .replace(/[^0-9]/g, '');
+                var productCartCount = pdList[num].querySelector('.quantity_opt').value;
+
+                nPayProducts.push({
+                    'name': labbit_pdName,
+                    'id': labbit_pdId,
+                    'price': '' + parseInt(productPrice) / parseInt(productCartCount), 
+                    'brand': '브랜드 명',
+                    'category': labbit_category,
+                    'variant': productVariant,
+                    'quantity': parseInt(productCartCount),
+                });
+            }
+        }
+
+        if(!isOption){
+            // 비옵션일 경우 ..
+            var productCartCount = document.querySelector('#quantity').value;
+
+            nPayProducts.push({
+                'name': labbit_pdName,
+                'id': labbit_pdId,
+                'price': labbit_pdPrice,
+                'brand': '브랜드 명',
+                'category': labbit_category,
+                'variant': labbit_pdName,
+                'quantity': parseInt(productCartCount),
+            });
+
+        }
+        
+        if (nPayProducts.length == 0) {
+            return;
+        }
+
+        if (!nPayPurchaseFlag) {
+            return;
+        }
+
+        nPayPurchaseFlag = false;
+        
+        // 1분 타이머로 중복 클릭 방지 
+        setTimeout(function () {
+            nPayPurchaseFlag = true;
+        }, 60000);
+
+        sendNpayPurchaseData(nPayProducts);
+    }
+
+    function sendNpayPurchaseData(nPayProducts) {
+
+        var revenue = document.querySelector('.total').innerText.split('원')[0].replace(/[^0-9]/g, '');
+
+        dataLayer.push({
+            'event': 'NpayPurchase',
+            'ecommerce': {
+                'purchase': {
+                    'actionField': {
+                        'id': getNpayId(),
+                        'affiliation': '브랜드 명',
+                        'revenue': revenue,
+                        'shipping': '',
+                        'coupon': ''
+                    },
+                    'products': nPayProducts
+                }
+            }
+        });
+    }
+
+    function getNpayId() {
+        var setTime = new Date();
+        var setYear = setTime.getFullYear();
+        var setMonth = setTime.getMonth() + 1;
+        var setDate = setTime.getDate();
+
+        return ("NPAY - " + setYear + setMonth + setDate + " - " + setTime.getTime());
+    }
+</script>
+
+<!-- LABBIT 향상된 네이버 페이 구매  In DetailPageView  끝 -->

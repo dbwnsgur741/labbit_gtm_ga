@@ -1,0 +1,115 @@
+<!-- 래빗 향상된 전자 상거래 환불 In 주문 내역 조회 -->
+
+<!-- 
+    1. 주문취소 버튼에 id 값 , value 값 추가 ( * 모듈별로 서버 변수 다를 수 있음 )
+    예시 ) 
+     <a href="#none" class="{$direct_cancel_display|display} btnNormal" onclick="{$action_direct_cancel}" id="labbit_refund_btn" value="{$order_id}">주문취소</a>
+    2.상품 반복 출력 구간에 id , value , 상품정보 추가  ( * 모듈별로 서버 변수 다를 수 있음 )
+    예시 ) 
+    <div class="description" value="{$order_id}" id="labbit_pdList">
+    <input type="hidden" id="labbit_pdId" value="{$param}">
+    <input type="hidden" id="labbit_pdQuantity" value="{$quantity}">
+-->
+
+<script>
+
+    // 주문 취소 버튼 환불 이벤트 바인딩
+    window.addEventListener("load", function (event) {
+        $('#labbit_refund_btn').bind('click', function () {
+            setRefundData($(this));
+        });
+    }, false);
+
+    function setRefundData(btnbtn) {
+
+        var refundId = btnbtn.getAttribute('value');
+        var products = [];
+        var pdList = document.querySelectorAll("#labbit_pdList[value='"+refundId+"']");
+
+        for(i=0 ; i < pdList.length ; i ++){
+
+            var pId = pdList[i].querySelector('#labbit_pdId').value.split('product_no=')[1].split('&')[0];
+            var pQuantity = pdList[i].querySelector('#labbit_pdQuantity').value;
+
+            products.push({
+                'id': pId,
+                'quantity': parseInt(pQuantity)
+            });
+        }
+
+        if(!products.length == 0){
+            fetchRefundData(refundId,products);
+        }
+    }
+
+    function fetchRefundData(refundId,products) {
+
+        dataLayer.push({
+            'event': 'refundOrder',
+            'ecommerce': {
+                'refund': {
+                    'actionField': {
+                        'id': refundId
+                    },
+                    'products': products
+                }
+            }
+        });
+    }
+</script>
+
+
+<!-- LABBIT 향상된 전자 상거래 환불 In 상세 주문 리스트-->
+
+<script>
+
+    document.querySelector('#labbit_refund_btn').addEventListener('click',function(){
+    	setRefundData();
+	});
+
+    function setRefundData() {
+		var currentUrl = window.location.href
+        var refundId = currentUrl.split('order_id=')[1];
+        
+        // 예외 처리 ..
+        if(refundId.indexOf('history') > 0 ){
+			refundId = refundId.split('&')[0];
+		}
+
+        // <input type="hidden" value={$param_product} id="labbit_pdId"><input type="hidden" value={$quantity} id="labbit_pdQuantity">
+
+        var products = [];
+        var pdList = document.querySelectorAll("#labbit_pdList");
+        var num = 0;
+        for(num ; num < pdList.length ; num ++){
+            var pId = pdList[num].querySelector('#labbit_pdId').value.split('no=')[1].split('&')[0];
+            var pQuantity = pdList[num].querySelector('#labbit_pdQuantity').value;
+
+            products.push({
+                'id': pId,
+                'quantity': parseInt(pQuantity)
+            });
+        }
+
+        if(!products.length == 0){
+            fetchRefundData(refundId,products);
+        }
+    }
+
+    function fetchRefundData(refundId,products) {
+
+         dataLayer.push({
+             'event': 'refundOrder',
+             'ecommerce': {
+                 'refund': {
+                     'actionField': {
+                         'id': refundId
+                     },
+                     'products': products
+                 }
+             }
+         });
+    }
+</script>
+
+<!-- LABBIT 향상된 전자 상거래 환불 In 상세 주문 리스트 끝 -->

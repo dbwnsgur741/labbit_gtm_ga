@@ -1,4 +1,4 @@
-<!-- 래빗 향상된 전자 상거래 환불 In 주문 내역 조회 -->
+<!-- LABBIT 향상된 전자 상거래 환불 In 주문 내역 조회 -->
 
 <!-- 
     1. 주문취소 버튼에 id 값 , value 값 추가 ( * 모듈별로 서버 변수 다를 수 있음 )
@@ -22,11 +22,11 @@
 
     function setRefundData(btnbtn) {
 
-        var refundId = btnbtn.getAttribute('value');
+        var refundId = btnbtn[0].getAttribute('value');
         var products = [];
-        var pdList = document.querySelectorAll("#labbit_pdList[value='"+refundId+"']");
+        var pdList = document.querySelectorAll("#labbit_pdList[value='" + refundId + "']");
 
-        for(i=0 ; i < pdList.length ; i ++){
+        for (i = 0; i < pdList.length; i++) {
 
             var pId = pdList[i].querySelector('#labbit_pdId').value.split('product_no=')[1].split('&')[0];
             var pQuantity = pdList[i].querySelector('#labbit_pdQuantity').value;
@@ -37,12 +37,12 @@
             });
         }
 
-        if(!products.length == 0){
-            fetchRefundData(refundId,products);
+        if (!products.length == 0) {
+            fetchRefundData(refundId, products);
         }
     }
 
-    function fetchRefundData(refundId,products) {
+    function fetchRefundData(refundId, products) {
 
         dataLayer.push({
             'event': 'refundOrder',
@@ -59,57 +59,63 @@
 </script>
 
 
-<!-- LABBIT 향상된 전자 상거래 환불 In 상세 주문 리스트-->
+<!-- LABBIT 향상된 전자 상거래 환불 In 주문 내역 조회 끝 -->
 
+
+
+
+<!-- LABBIT 향상된 전자 상거래 환불 IN 주문 상세 내역 -->
+
+<!-- LABBIT Refund Order 상품 반복 부분 -->
 <script>
-
-    document.querySelector('#labbit_refund_btn').addEventListener('click',function(){
-    	setRefundData();
-	});
-
-    function setRefundData() {
-		var currentUrl = window.location.href
-        var refundId = currentUrl.split('order_id=')[1];
-        
-        // 예외 처리 ..
-        if(refundId.indexOf('history') > 0 ){
-			refundId = refundId.split('&')[0];
-		}
-
-        // <input type="hidden" value={$param_product} id="labbit_pdId"><input type="hidden" value={$quantity} id="labbit_pdQuantity">
-
-        var products = [];
-        var pdList = document.querySelectorAll("#labbit_pdList");
-        var num = 0;
-        for(num ; num < pdList.length ; num ++){
-            var pId = pdList[num].querySelector('#labbit_pdId').value.split('no=')[1].split('&')[0];
-            var pQuantity = pdList[num].querySelector('#labbit_pdQuantity').value;
-
-            products.push({
-                'id': pId,
-                'quantity': parseInt(pQuantity)
-            });
-        }
-
-        if(!products.length == 0){
-            fetchRefundData(refundId,products);
-        }
+    // 배열 선언 ( global )
+    if (!window.refund_pdList) {
+        window.refund_pdList = [];
     }
 
-    function fetchRefundData(refundId,products) {
+    // 모듈별로 서버변수 값이 다를 수 있음
 
-         dataLayer.push({
-             'event': 'refundOrder',
-             'ecommerce': {
-                 'refund': {
-                     'actionField': {
-                         'id': refundId
-                     },
-                     'products': products
-                 }
-             }
-         });
+    if ('{$product_name}' != "") {
+        refund_pdList.push({
+            'id': '{$param_product}'.value.split('product_no=')[1].split('&')[0],
+            'quantity': parseInt('{$quantity}')
+        });
     }
 </script>
 
-<!-- LABBIT 향상된 전자 상거래 환불 In 상세 주문 리스트 끝 -->
+<!-- LABBIT Refund Order 상품 반복 부분 끝 -->
+
+<!-- LABBIT Refund Order 최하단 스크립트 -->
+
+<script>
+    // 주문 취소 버튼 환불 이벤트 바인딩
+    window.addEventListener("load", function (event) {
+        $('#labbit_refund_btn').bind('click', function () {
+            fetchRefundData($(this));
+        });
+    }, false);
+
+    function fetchRefundData(btnbtn) {
+
+        var refundId = btnbtn[0].getAttribute('value');
+
+        if (refund_pdList.length != 0) {
+            dataLayer.push({
+                'event': 'refundOrder',
+                'ecommerce': {
+                    'refund': {
+                        'actionField': {
+                            'id': refundId
+                        },
+                        'products': refund_pdList
+                    }
+                }
+            });
+        }
+    }
+</script>
+
+<!-- LABBIT Refund Order 최하단 스크립트 끝 -->
+
+
+<!-- LABBIT 향상된 전자 상거래 환불 IN 주문 상세 내역 끝 -->

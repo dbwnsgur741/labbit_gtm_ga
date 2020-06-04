@@ -77,7 +77,7 @@
 
     if ('{$product_name}' != "") {
         refund_pdList.push({
-            'id': '{$param_product}'.value.split('product_no=')[1].split('&')[0],
+            'id': '{$param_product}'.split('product_no=')[1].split('&')[0],
             'quantity': parseInt('{$quantity}')
         });
     }

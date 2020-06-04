@@ -25,7 +25,7 @@
         var nPayProducts = []; // 네이버페이 구매 이벤트에 담길 상품 목록 
 
         var pdList = document.querySelectorAll('.option_product'); // 옵션 있는 경우에 장바구니에 담길 상품 목록 ( ※ 모듈에 따라 달라질 수 있음 )
-        var isOption = document.querySelector('.xans-product-option > li'); // 옵션 유무 판별 ( ※ 모듈에 따라 달라질 수 있음 )
+        var isOption = document.querySelector('.xans-product-option > tr > td > select'); // 옵션 유무 판별 ( ※ 모듈에 따라 달라질 수 있음 )
 
         // 옵션 있고 , 장바구니에 담길 상품이 있는 경우 
         if (pdList.length > 0 && isOption) {
@@ -86,7 +86,7 @@
 
     function sendNpayPurchaseData(nPayProducts) {
 
-        var revenue = document.querySelector('.total').innerText.split('원')[0].replace(/[^0-9]/g, ''); // 총 상품 금액 
+        var revenue = document.querySelector('.total').innerText.split('원')[0].replace(/[^0-9]/g, ''); // 총 상품 금액 ( 모듈에 따라 달라질 수 있음 )
 
         dataLayer.push({
             'event': 'NpayPurchase',

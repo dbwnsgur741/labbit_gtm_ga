@@ -31,7 +31,7 @@
             'price': '{$product_price}'.replace(/[^0-9]/g, ""),
             'quantity': parseInt('{$product_quantity}'),
             'category': '{$param}'.split('cate_no=')[1],
-            'variant': ('{$product_opt_str}' ? '{product_opt_str}' : '{$product_name}'),
+            'variant': ('{$product_opt_str}' ? '{$product_opt_str}' : '{$product_name}'),
         });
     }
 </script>

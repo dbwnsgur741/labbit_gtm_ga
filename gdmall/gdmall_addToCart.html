@@ -1,0 +1,61 @@
+<!-- LABBIT 향상된 전자상거래 AddToCart -->
+
+<script>
+    /* 상세페이지와 같은 변수 사용 
+    var labbit_pdName = "{=goodsView['goodsNm']}";
+    var labbit_pdId = "{=goodsView['goodsNo']}";
+    var labbit_pdPrice = "{=gd_isset(goodsView['goodsPrice'],0)}";
+    var labbit_pdBrand = '브랜드 명';
+	var labbit_pdCategory = "{=goodsView['cateCd']}";
+    */
+
+    document.querySelector('.btn_add_cart').addEventListener('click', function () {
+        setCartData();
+    });
+
+    function setCartData() {
+
+        var products = [];
+        // 쇼핑몰 마다 DOM 객체가 다를 수 있음.
+        var pdOptional = document.querySelectorAll('.option_display_area > tbody');
+
+        for (var i = 0; i < pdOptional.length; i++) {
+
+            var productoption = pdOptional[i].querySelector('strong.cart_tit > span').innerText; 
+            var productprice = pdOptional[i].querySelector('.item_choice_price').innerText.split('원')[0].replace(
+                /[^0-9]/g, "");
+            var quantity = parseInt(pdOptional[i].querySelector("input[title=수량]").value);
+            var productprice = parseInt(productprice) / quantity;
+
+            products[i] = {
+                'name': labbit_pdName,
+                'id': labbit_pdId,
+                'price': '' + productprice,
+                'brand': labbit_pdBrand,
+                'category': labbit_pdCategory,
+                'variant': productoption,
+                'quantity': quantity,
+            }
+        }
+
+        if (products.length == 0) {
+            return;
+        }
+
+        fetchCartData(products);
+    }
+
+    function fetchCartData(products) {
+        dataLayer.push({
+            'event': 'addToCart',
+            'ecommerce': {
+                'currencyCode': 'KRW',
+                'add': {
+                    'products': products
+                }
+            }
+        });
+    }
+</script>
+
+<!-- LABBIT 향상된 전자상거래 AddToCart 끝-->

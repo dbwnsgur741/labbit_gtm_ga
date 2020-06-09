@@ -1,0 +1,98 @@
+<!-- LABBIT 향상된 전자상거래 일반 구매  -->
+
+<script>    
+    var act_id = '{orderInfo.orderNo}';
+    var act_revenue = parseInt('{=gd_global_currency_display(gd_isset(orderInfo.settlePrice))}'.split('원')[0].replace(/[^0-9]/g, ""));
+    var act_shipping = parseInt('{=gd_global_currency_display(gd_isset(orderDeliveryInfo.deliveryPolicyCharge))}'.split('원')[0].replace(/[^0-9]/g, ""));
+
+    function setPurchaseData() {
+
+        var pdList = document.querySelectorAll("input[name='naver-common-inflow-script-order-item']");
+
+        var products = [];
+
+        for (var i = 0; i < pdList.length; i++) {
+
+            var pdId = pdList[i].value.split("goodsno:'")[1].split("',optno")[0];
+            var pdName = pdList[i].value.split("goodsnm:'")[1].split("',ea")[0];
+            var pdQuantity = pdList[i].value.split("ea:")[1].split(",price")[0];
+            var pdPrice = pdList[i].value.split("price:")[1].split(",")[0];
+
+            products[i] = {
+                'name': pdName,
+                'id': pdId,
+                'price': '' + parseInt(pdPrice) / parseInt(pdQuantity),
+                'quantity': parseInt(pdQuantity),
+                'brand': '브랜드 명',
+                'category': '카테고리 명', // 브랜드 명이랑 일치 또는 생략 가능 
+                'variant': pdName
+            }
+        }
+
+        for (j = 0; j < products.length; j++) {
+            products[j].name = getPdName(products[j].name);
+            products[j].variant = getPdName(products[j].variant);
+        }
+
+        if (products.length == 0) {
+            return;
+        }
+
+        fetchPurchaseData(products);
+    }
+
+    function fetchPurchaseData(products) {
+
+        dataLayer.push({
+            'event': 'NomalPurchase',
+            'ecommerce': {
+                'purchase': {
+                    'actionField': {
+                        'id': act_id,
+                        'affiliation': '브랜드 명',
+                        'revenue': ''+act_revenue,
+                        'shipping': ''+act_shipping,
+                        'coupon': ''
+                    },
+                    'products': products
+                }
+            }
+        });
+
+    }
+
+    function getPdName(labbit_pdName) {
+
+        var productName = '';
+
+        if (labbit_pdName.indexOf('<br>') > 0) {
+            temp = labbit_pdName.split('<br>');
+            for (i = 0; i < temp.length; i++) {
+                productName += temp[i];
+            }
+            return productName;
+        }
+
+        if (labbit_pdName.indexOf('<BR>') > 0) {
+            temp = labbit_pdName.split('<BR>');
+            for (i = 0; i < temp.length; i++) {
+                productName += temp[i];
+            }
+            return productName;
+        }
+
+        if (labbit_pdName.indexOf('<Br>') > 0) {
+            temp = labbit_pdName.split('<Br>');
+            for (i = 0; i < temp.length; i++) {
+                productName += temp[i];
+            }
+            return productName;
+        }
+
+        return labbit_pdName;
+    }
+
+    setPurchaseData();
+</script>
+
+<!-- LABBIT 향상된 전자상거래 일반 구매 끝 -->

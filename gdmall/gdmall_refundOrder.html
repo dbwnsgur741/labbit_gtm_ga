@@ -1,0 +1,17 @@
+<!-- LABBIT 향상된 전자상거래 환불 이벤트-->
+
+<script>
+    var refundBtn = $(this);
+    var refundId = $(this).closest('tr').data('order-no');
+
+    dataLayer.push({
+        'event': 'refundOrder',
+        'ecommerce': {
+            'refund': {
+                'actionField': {
+                    'id': '' + refundId
+                }
+            }
+        }
+    });
+</script>

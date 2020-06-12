@@ -1,0 +1,17 @@
+<script>
+    // 래빗 향상된 전자 상거래 환불 ( 입금 이전 .. )
+    var refundBtn = $(this);
+    var refundId = $(this)[0].getAttribute('order-no');
+
+    dataLayer.push({
+        'event': 'refundOrder',
+        'ecommerce': {
+            'refund': {
+                'actionField': {
+                    'id': '' + refundId
+                }
+            }
+        }
+    });
+    
+</script>

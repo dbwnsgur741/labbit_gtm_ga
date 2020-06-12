@@ -1,0 +1,77 @@
+<script>
+
+    var nPayPurchaseFlag = true;
+
+    window.addEventListener("load", function (event) {
+        $('.npay_btn_pay').bind('click', function () {
+            setNpayPurchaseData();
+        });
+
+    }, false);
+
+    function setNpayPurchaseData() {
+        var nPayProducts = [];
+        var pdOptional = document.querySelectorAll('ul.my_goods > li');
+
+        for (var i = 0; i < pdOptional.length; i++) {
+
+            // 체크된것만 가져오기
+            if (pdOptional[i].querySelector("input[name='cartSno[]']").checked) {
+
+                var rabbit_pdName = pdOptional[i].querySelector("input[name='cartSno[]']").dataset.goodsNm;
+                var rabbit_pdId = pdOptional[i].querySelector("input[name='cartSno[]']").dataset.goodsNo;
+                var productoption = pdOptional[i].querySelector("input[name='cartSno[]']").dataset.optionNm;
+                var productprice = pdOptional[i].querySelector("input[name='cartSno[]']").dataset.price;
+                var quantity = parseInt(pdOptional[i].querySelector("input[name='cartSno[]']").dataset.defaultGoodsCnt);
+                var productprice = parseInt(productprice) / quantity;
+
+                nPayProducts.push({
+                    'name': rabbit_pdName,
+                    'id': rabbit_pdId,
+                    'price': '' + productprice,
+                    'quantity': quantity,
+                    'brand': '브랜드 명',
+                    'category': '카테고리 명', // 카테고리 못 잡아 올 경우 브랜드 명과 일치시키거나 제외
+                    'variant': (productoption == '' ? rabbit_pdName : productoption),
+                });
+            }
+        }
+
+        if (nPayProducts.length == 0) {
+            return;
+        }
+
+        if (!nPayPurchaseFlag) {
+            return;
+        }
+
+        nPayPurchaseFlag = false;
+        setTimeout(function () {
+            nPayPurchaseFlag = true;
+        }, 60000);
+
+        fetchNpayPurchaseData(nPayProducts);
+    }
+
+    function fetchNpayPurchaseData(nPayProducts) {
+        // 고도몰 스킨 별로 DOM 객체가 다를 수 있다.
+        var revenue = document.querySelector('#totalSettlePrice').innerText.replace(/[^0-9]/g, "");
+        var shipping = document.querySelector('#totalDeliveryCharge').innerText.replace(/[^0-9]/g, "");
+
+        dataLayer.push({
+            'event': 'NpayPurchase',
+            'ecommerce': {
+                'purchase': {
+                    'actionField': {
+                        'id': getNpayId(),
+                        'affiliation': '브랜드 명',
+                        'revenue': '' + revenue,
+                        'shipping': '' + shipping,
+                        'coupon': ''
+                    },
+                    'products': nPayProducts
+                }
+            }
+        });
+    }
+</script>

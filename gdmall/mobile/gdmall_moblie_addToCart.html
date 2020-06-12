@@ -1,0 +1,73 @@
+<!-- LABBIT 향상된 전자상거래 AddToCart -->
+
+<script>
+    /* 상세페이지와 같은 변수 사용 
+    var labbit_pdName = "{=goodsView['goodsNm']}";
+    var labbit_pdId = "{=goodsView['goodsNo']}";
+    var labbit_pdPrice = "{=gd_isset(goodsView['goodsPrice'],0)}";
+    var labbit_pdBrand = '브랜드 명';
+	var labbit_pdCategory = "{=goodsView['cateCd']}";
+    */
+
+    document.querySelector('.js_btn_add_cart').addEventListener('click', function () {
+        setCartData();
+    });
+
+    function setCartData() {
+
+        var products = [];
+        
+        if ($('[id^=\'option_display_item\']').length > 0) {
+
+            $('[id^=\'option_display_item\']').each(function (index) {
+                var optName = '';
+
+                if (typeof $(this).find('.option-name').html() != 'undefined') {
+                    optName = $(this).find('.option-name').html();
+                } else if (typeof $(this).find('div>dl:eq(0)>dt').html() != 'undefined') {
+                    optName = $(this).find('div>dl:eq(0)>dt').html();
+                } else if (typeof $(this).find('div>span:eq(0)').html() != 'undefined') {
+                    optName = $(this).find('div>span:eq(0)').html();
+                }
+
+                if ($(this).find('input[name^=\'optionText\']').length > 0) {
+                    optName += '-' + $(this).find('input[name^=\'optionText\']').val();
+                }
+
+                var optQuantity = $(this).find('.count input[name=\'goodsCnt[]\']').val();
+
+                products[index] = {
+                    'name': labbit_pdName,
+                    'id': labbit_pdId,
+                    'price': '' + parseInt(labbit_pdPrice),
+                    'category': labbit_pdCategory,
+                    'brand': labbit_pdBrand,
+                    'variant': optName,
+                    'quantity': parseInt(optQuantity)
+                }
+            });
+        } else {
+            return;
+        }
+
+        if (products.length == 0) {
+            return;
+        }
+
+        fetchCartData(products);
+    }
+
+    function fetchCartData(products) {
+        dataLayer.push({
+            'event': 'addToCart',
+            'ecommerce': {
+                'currencyCode': 'KRW',
+                'add': {
+                    'products': products
+                }
+            }
+        });
+    }
+</script>
+
+<!-- LABBIT 향상된 전자상거래 AddToCart 끝-->

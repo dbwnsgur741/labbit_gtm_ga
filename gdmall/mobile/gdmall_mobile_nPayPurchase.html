@@ -1,0 +1,113 @@
+<!-- LABBIT 향상된 전자상거래 AddToCart -->
+
+<script>
+    /* 상세페이지와 같은 변수 사용 
+    var labbit_pdName = "{=goodsView['goodsNm']}";
+    var labbit_pdId = "{=goodsView['goodsNo']}";
+    var labbit_pdPrice = "{=gd_isset(goodsView['goodsPrice'],0)}";
+    var labbit_pdBrand = '브랜드 명';
+	var labbit_pdCategory = "{=goodsView['cateCd']}";
+    */
+
+    var nPayPurchaseFlag = true;
+
+    window.addEventListener("load", function (event) {
+        $('.npay_btn_pay').bind('click', function () {
+            setNpayPurchaseData();
+        });
+
+    }, false);
+
+    function setNpayPurchaseData() {
+
+        var nPayProducts = [];
+
+        if ($('[id^=\'option_display_item\']').length > 0) {
+
+            $('[id^=\'option_display_item\']').each(function (index) {
+                var optName = '';
+
+                if (typeof $(this).find('.option-name').html() != 'undefined') {
+                    optName = $(this).find('.option-name').html();
+                } else if (typeof $(this).find('div>dl:eq(0)>dt').html() != 'undefined') {
+                    optName = $(this).find('div>dl:eq(0)>dt').html();
+                } else if (typeof $(this).find('div>span:eq(0)').html() != 'undefined') {
+                    optName = $(this).find('div>span:eq(0)').html();
+                }
+
+                if ($(this).find('input[name^=\'optionText\']').length > 0) {
+                    optName += '-' + $(this).find('input[name^=\'optionText\']').val();
+                }
+
+                var optQuantity = $(this).find('.count input[name=\'goodsCnt[]\']').val();
+
+                nPayProducts[index] = {
+                    'name': labbit_pdName,
+                    'id': labbit_pdId,
+                    'price': '' + parseInt(labbit_pdPrice),
+                    'category': labbit_pdCategory,
+                    'brand': labbit_pdBrand,
+                    'variant': optName,
+                    'quantity': parseInt(optQuantity)
+                }
+            });
+        } else {
+            return;
+        }
+
+        if (nPayProducts.length == 0) {
+            return;
+        }
+
+        if (!nPayPurchaseFlag) {
+            return;
+        }
+
+        nPayPurchaseFlag = false;
+        setTimeout(function () {
+            nPayPurchaseFlag = true;
+        }, 60000);
+
+        fetchNpayPurchaseData(nPayProducts);
+    }
+
+    function fetchNpayPurchaseData(nPayProducts) {
+
+        var revenue = 0;
+
+        for (var i = 0; i < nPayProducts.length; i++) {
+            revenue += parseInt(nPayProducts[i].price) * nPayProducts[i].quantity;
+        }
+
+        console.log(nPayProducts);
+        console.log(revenue);
+        
+        // dataLayer.push({
+        //     'event': 'NpayPurchase',
+        //     'ecommerce': {
+        //         'purchase': {
+        //             'actionField': {
+        //                 'id': getNpayId(),
+        //                 'affiliation': labbit_pdBrand,
+        //                 'revenue': '' + revenue,
+        //                 'shipping': '',
+        //                 'coupon': ''
+        //             },
+        //             'products': nPayProducts
+        //         }
+        //     }
+        // });
+    }
+
+    function getNpayId() {
+
+        var setTime = new Date();
+        var setYear = setTime.getFullYear();
+        var setMonth = setTime.getMonth() + 1;
+        var setDate = setTime.getDate();
+
+        return ("NPAY - " + setYear + setMonth + setDate + " - " + setTime.getTime());
+    }
+</script>
+
+<!-- LABBIT 향상된 전자상거래 AddToCart 끝-->

@@ -79,24 +79,21 @@
             revenue += parseInt(nPayProducts[i].price) * nPayProducts[i].quantity;
         }
 
-        console.log(nPayProducts);
-        console.log(revenue);
-        
-        // dataLayer.push({
-        //     'event': 'NpayPurchase',
-        //     'ecommerce': {
-        //         'purchase': {
-        //             'actionField': {
-        //                 'id': getNpayId(),
-        //                 'affiliation': labbit_pdBrand,
-        //                 'revenue': '' + revenue,
-        //                 'shipping': '',
-        //                 'coupon': ''
-        //             },
-        //             'products': nPayProducts
-        //         }
-        //     }
-        // });
+        dataLayer.push({
+            'event': 'NpayPurchase',
+            'ecommerce': {
+                'purchase': {
+                    'actionField': {
+                        'id': getNpayId(),
+                        'affiliation': labbit_pdBrand,
+                        'revenue': '' + revenue,
+                        'shipping': '',
+                        'coupon': ''
+                    },
+                    'products': nPayProducts
+                }
+            }
+        });
     }
 
     function getNpayId() {

@@ -1,0 +1,50 @@
+<script>
+
+    $('ul > li#labbit_event_list').each(function(index,item){
+        $(item).bind('click',function(){
+            setClickEventData($(this));
+        });
+    });
+
+    function setClickEventData(btn) {
+
+        var eventArray = [];
+        var eventNode = btn[0];
+        var eventName = btn[0].getAttribute('value');
+        var eventLocation = eventNode.querySelector('a').href;
+        var eventId = eventNode.querySelector('a').href.split('/');
+        eventId = eventId[eventId.length - 2];
+
+        var eventCreative = eventNode.querySelector('.date').innerText;
+
+        if (!eventId) {
+            return;
+        }
+
+        eventArray.push({
+            'id': eventId,
+            'name': eventName,
+            'creative': eventCreative,
+            'position': eventId
+        });
+
+        sendClickEventData(eventArray);
+    }
+
+
+    function sendClickEventData(eventArray, eventLocation) {
+
+        dataLayer.push({
+            'event': 'PromotionClick',
+            'ecommerce': {
+                'promoClick': {
+                    'promotions': eventArray
+                }
+            },
+            'eventCallback': function () {
+                document.location = window.location.hostname + eventLocation;
+            }
+        });
+
+    }
+</script>

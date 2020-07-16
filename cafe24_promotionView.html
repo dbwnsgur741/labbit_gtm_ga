@@ -1,0 +1,35 @@
+<script>
+    function setViewEventData() {
+
+        var eventArray = [];
+        var eventId = document.querySelector('#no').value;
+        var eventName = document.querySelector('#labbit_promotion_name').innerText;
+        var eventCreative = '';
+
+        if (!eventId) {
+            return;
+        }
+
+        eventArray.push({
+            'id': eventId,
+            'name': eventName,
+            'creative': eventCreative,
+            'position': eventId
+        });
+
+        sendViewEventData(eventArray);
+    }
+
+    function sendViewEventData(eventArray) {
+
+        dataLayer.push({
+            'ecommerce': {
+                'promoView': {
+                    'promotions': eventArray
+                }
+            }
+        });
+    }
+
+    setViewEventData();
+</script>
